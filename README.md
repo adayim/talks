@@ -1,2 +1,3 @@
-# talks
-My Slides
+# Slides
+This repo is for storing the slides.
+
