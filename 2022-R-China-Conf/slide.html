@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>forestploter：森林图绘制包</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="阿力木·达依木" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <script src="libs/freezeframe/freezeframe.min.js"></script>
+    <script src="libs/xaringanExtra-freezeframe/freezeframe-init.js"></script>
+    <script id="xaringanExtra-freezeframe-options" type="application/json">{"selector":"img[src$=\"gif\"]","trigger":"click","overlay":false,"responsive":true,"warnings":true}</script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <link href="libs/xaringanExtra-extra-styles/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <!-- (Re)Defines a bunch of LaTeX commands that can then be used directly in the .Rmd file as '\command{...}' -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      TeX: {
+        /* This enables color macros */
+        extensions: ["color.js"],
+        Macros: {
+          /* Probability & mathematical symbols */
+          Pr: "{\\style{font-family:inherit; font-size: 110%;}{\\text{Pr}}}",
+          exp: "{\\style{font-family:inherit; font-size: 105%;}{\\text{exp}}}",
+          log: "{\\style{font-family:inherit; font-size: 105%;}{\\text{log}}}",
+          ln: "{\\style{font-family:inherit; font-size: 105%;}{\\text{ln}}}",
+          logit: "{\\style{font-family:inherit; font-size: 100%;}{\\text{logit}}}",
+          HR: "{\\style{font-family:inherit; font-size: 105%;}{\\text{HR}}}",
+          OR: "{\\style{font-family:inherit; font-size: 105%;}{\\text{OR}}}",
+          E: "{\\style{font-family:inherit; font-size: 105%;}{\\text{E}}}",
+          Var: "{\\style{font-family:inherit; font-size: 105%;}{\\text{Var}}}",
+          Cov: "{\\style{font-family:inherit; font-size: 105%;}{\\text{Cov}}}",
+          Corr: "{\\style{font-family:inherit; font-size: 105%;}{\\text{Corr}}}",
+          DIC: "{\\style{font-family:inherit; font-size: 105%;}{\\text{DIC}}}",
+          se: "{\\style{font-family:inherit; font-size: 100%;}{\\text{se}}}",
+          sd: "{\\style{font-family:inherit; font-size: 100%;}{\\text{sd}}}",
+          kld: "{\\style{font-family:inherit; font-size: 100%;}{\\text{KLD}}}",
+          with: "{\\style{font-family:inherit; font-size: 100%;}{\\text{with}}}",
+          /* Distributions */
+          dnorm: "{\\style{font-family:inherit;}{\\text{Normal}}}",
+          dt: "{\\style{font-family:inherit;}{\\text{t}}}",
+          ddirch: "{\\style{font-family:inherit;}{\\text{Dirichlet}}}",
+          dmulti: "{\\style{font-family:inherit;}{\\text{Multinomial}}}",
+          dbeta: "{\\style{font-family:inherit;}{\\text{Beta}}}",
+          dgamma: "{\\style{font-family:inherit;}{\\text{Gamma}}}",
+          dbern: "{\\style{font-family:inherit;}{\\text{Bernoulli}}}",
+          dbin: "{\\style{font-family:inherit;}{\\text{Binomial}}}",
+          dpois: "{\\style{font-family:inherit;}{\\text{Poisson}}}",
+          dweib: "{\\style{font-family:inherit;}{\\text{Weibull}}}",
+          dexp: "{\\style{font-family:inherit;}{\\text{Exponential}}}",
+          dlnorm: "{\\style{font-family:inherit;}{\\text{logNormal}}}",
+          dunif: "{\\style{font-family:inherit;}{\\text{Uniform}}}",
+          /* LaTeX formatting */
+          bm: ["{\\boldsymbol #1}",1],
+          /* These create macros to typeset numbers in maths with the basic font */
+          0: "{\\style{font-family:inherit; font-size: 105%;}{\\text{0}}}",
+          1: "{\\style{font-family:inherit; font-size: 105%;}{\\text{1}}}",
+          2: "{\\style{font-family:inherit; font-size: 105%;}{\\text{2}}}",
+          3: "{\\style{font-family:inherit; font-size: 105%;}{\\text{3}}}",
+          4: "{\\style{font-family:inherit; font-size: 105%;}{\\text{4}}}",
+          5: "{\\style{font-family:inherit; font-size: 105%;}{\\text{5}}}",
+          6: "{\\style{font-family:inherit; font-size: 105%;}{\\text{6}}}",
+          7: "{\\style{font-family:inherit; font-size: 105%;}{\\text{7}}}",
+          8: "{\\style{font-family:inherit; font-size: 105%;}{\\text{8}}}",
+          9: "{\\style{font-family:inherit; font-size: 105%;}{\\text{9}}}",
+          /* Health economics quantities */
+          icer: "{\\style{font-family:inherit; font-size: 100%;}{\\text{ICER}}}",
+          nb: "{\\style{font-family:inherit; font-size: 100%;}{\\text{NB}}}",
+          ol: "{\\style{font-family:inherit; font-size: 100%;}{\\text{OL}}}",
+          ceac: "{\\style{font-family:inherit; font-size: 100%;}{\\text{CEAC}}}",
+          evpi: "{\\style{font-family:inherit; font-size: 100%;}{\\text{EVPI}}}",
+          evppi: "{\\style{font-family:inherit; font-size: 100%;}{\\text{EVPPI}}}",
+          evsi: "{\\style{font-family:inherit; font-size: 100%;}{\\text{EVSI}}}"
+        }
+      }
+    });
+    </script>
+    <link rel="stylesheet" href="assets/xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="assets/beamer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+class: title-slide, center, middle
+
+# forestploter：森林图绘制包&lt;span style="display:block; margin-top: 10px ;"&gt;&lt;/span&gt; 
+
+### 阿力木·达依木
+
+### Department of Oncology | University of Cambridge
+
+
+.title-small[
+&lt;svg viewBox="0 0 512 512" style="position:relative;display:inline-block;top:.1em;fill:#00acee;height:0.8em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"&gt;&lt;/path&gt;&lt;/svg&gt;  [ad938@medschl.cam.ac.uk](mailto:ad938@medschl.cam.ac.uk)
+&lt;svg viewBox="0 0 512 512" style="position:relative;display:inline-block;top:.1em;fill:#EA7600;height:0.8em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M503.52,241.48c-.12-1.56-.24-3.12-.24-4.68v-.12l-.36-4.68v-.12a245.86,245.86,0,0,0-7.32-41.15c0-.12,0-.12-.12-.24l-1.08-4c-.12-.24-.12-.48-.24-.6-.36-1.2-.72-2.52-1.08-3.72-.12-.24-.12-.6-.24-.84-.36-1.2-.72-2.4-1.08-3.48-.12-.36-.24-.6-.36-1-.36-1.2-.72-2.28-1.2-3.48l-.36-1.08c-.36-1.08-.84-2.28-1.2-3.36a8.27,8.27,0,0,0-.36-1c-.48-1.08-.84-2.28-1.32-3.36-.12-.24-.24-.6-.36-.84-.48-1.2-1-2.28-1.44-3.48,0-.12-.12-.24-.12-.36-1.56-3.84-3.24-7.68-5-11.4l-.36-.72c-.48-1-.84-1.8-1.32-2.64-.24-.48-.48-1.08-.72-1.56-.36-.84-.84-1.56-1.2-2.4-.36-.6-.6-1.2-1-1.8s-.84-1.44-1.2-2.28c-.36-.6-.72-1.32-1.08-1.92s-.84-1.44-1.2-2.16a18.07,18.07,0,0,0-1.2-2c-.36-.72-.84-1.32-1.2-2s-.84-1.32-1.2-2-.84-1.32-1.2-1.92-.84-1.44-1.32-2.16a15.63,15.63,0,0,0-1.2-1.8L463.2,119a15.63,15.63,0,0,0-1.2-1.8c-.48-.72-1.08-1.56-1.56-2.28-.36-.48-.72-1.08-1.08-1.56l-1.8-2.52c-.36-.48-.6-.84-1-1.32-1-1.32-1.8-2.52-2.76-3.72a248.76,248.76,0,0,0-23.51-26.64A186.82,186.82,0,0,0,412,62.46c-4-3.48-8.16-6.72-12.48-9.84a162.49,162.49,0,0,0-24.6-15.12c-2.4-1.32-4.8-2.52-7.2-3.72a254,254,0,0,0-55.43-19.56c-1.92-.36-3.84-.84-5.64-1.2h-.12c-1-.12-1.8-.36-2.76-.48a236.35,236.35,0,0,0-38-4H255.14a234.62,234.62,0,0,0-45.48,5c-33.59,7.08-63.23,21.24-82.91,39-1.08,1-1.92,1.68-2.4,2.16l-.48.48H124l-.12.12.12-.12a.12.12,0,0,0,.12-.12l-.12.12a.42.42,0,0,1,.24-.12c14.64-8.76,34.92-16,49.44-19.56l5.88-1.44c.36-.12.84-.12,1.2-.24,1.68-.36,3.36-.72,5.16-1.08.24,0,.6-.12.84-.12C250.94,20.94,319.34,40.14,367,85.61a171.49,171.49,0,0,1,26.88,32.76c30.36,49.2,27.48,111.11,3.84,147.59-34.44,53-111.35,71.27-159,24.84a84.19,84.19,0,0,1-25.56-59,74.05,74.05,0,0,1,6.24-31c1.68-3.84,13.08-25.67,18.24-24.59-13.08-2.76-37.55,2.64-54.71,28.19-15.36,22.92-14.52,58.2-5,83.28a132.85,132.85,0,0,1-12.12-39.24c-12.24-82.55,43.31-153,94.31-170.51-27.48-24-96.47-22.31-147.71,15.36-29.88,22-51.23,53.16-62.51,90.36,1.68-20.88,9.6-52.08,25.8-83.88-17.16,8.88-39,37-49.8,62.88-15.6,37.43-21,82.19-16.08,124.79.36,3.24.72,6.36,1.08,9.6,19.92,117.11,122,206.38,244.78,206.38C392.77,503.42,504,392.19,504,255,503.88,250.48,503.76,245.92,503.52,241.48Z"&gt;&lt;/path&gt;&lt;/svg&gt;  [https://alim.gitee.io/](https://alim.gitee.io/)
+&lt;svg viewBox="0 0 496 512" style="position:relative;display:inline-block;top:.1em;fill:black;height:0.8em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"&gt;&lt;/path&gt;&lt;/svg&gt;  [https://www.github.com/adayim](https://www.github.com/adayim)
+&lt;svg viewBox="0 0 496 512" style="position:relative;display:inline-block;top:.1em;fill:black;height:0.8em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"&gt;&lt;/path&gt;&lt;/svg&gt;  [https://github.com/adayim/forestploter](https://github.com/adayim/forestploter)
+&lt;svg viewBox="0 0 448 512" style="position:relative;display:inline-block;top:.1em;fill:#00acee;height:0.8em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"&gt;&lt;/path&gt;&lt;/svg&gt;  [https://gitee.com/alim](https://gitee.com/alim)     
+]
+
+### 第15届中国R会议, 北京 
+&lt;!-- Can also separate the various components of the extra argument 'params', eg as in 
+### 第15届中国R会议, 北京, forestploter 包
+--&gt;
+
+25/11/2022
+
+&lt;!-- This adds a footer (optional and with other possibilities...) --&gt;
+
+---
+
+layout: true
+.footer-left[
+阿力木·达依木
+]
+&lt;!-- Can also include social media icons &amp; hyperlinks --&gt;
+.footer-social[
+&lt;!-- &amp;nbsp;&lt;a href="mailto:ad938@medschl.cam.ac.uk"; title="Email me"&gt;&lt;svg viewBox="0 0 512 512" style="position:relative;display:inline-block;top:.1em;fill:#bcc0c4;height:0.8em;" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"&gt;&lt;/path&gt;
+&lt;/svg&gt;&lt;/a&gt;&amp;nbsp; &amp;nbsp;&lt;a href="https://alim.gitee.io/"; title="Visit my website"&gt;&lt;svg viewBox="0 0 512 512" style="position:relative;display:inline-block;top:.1em;fill:#bcc0c4;height:0.8em;" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;path d="M503.52,241.48c-.12-1.56-.24-3.12-.24-4.68v-.12l-.36-4.68v-.12a245.86,245.86,0,0,0-7.32-41.15c0-.12,0-.12-.12-.24l-1.08-4c-.12-.24-.12-.48-.24-.6-.36-1.2-.72-2.52-1.08-3.72-.12-.24-.12-.6-.24-.84-.36-1.2-.72-2.4-1.08-3.48-.12-.36-.24-.6-.36-1-.36-1.2-.72-2.28-1.2-3.48l-.36-1.08c-.36-1.08-.84-2.28-1.2-3.36a8.27,8.27,0,0,0-.36-1c-.48-1.08-.84-2.28-1.32-3.36-.12-.24-.24-.6-.36-.84-.48-1.2-1-2.28-1.44-3.48,0-.12-.12-.24-.12-.36-1.56-3.84-3.24-7.68-5-11.4l-.36-.72c-.48-1-.84-1.8-1.32-2.64-.24-.48-.48-1.08-.72-1.56-.36-.84-.84-1.56-1.2-2.4-.36-.6-.6-1.2-1-1.8s-.84-1.44-1.2-2.28c-.36-.6-.72-1.32-1.08-1.92s-.84-1.44-1.2-2.16a18.07,18.07,0,0,0-1.2-2c-.36-.72-.84-1.32-1.2-2s-.84-1.32-1.2-2-.84-1.32-1.2-1.92-.84-1.44-1.32-2.16a15.63,15.63,0,0,0-1.2-1.8L463.2,119a15.63,15.63,0,0,0-1.2-1.8c-.48-.72-1.08-1.56-1.56-2.28-.36-.48-.72-1.08-1.08-1.56l-1.8-2.52c-.36-.48-.6-.84-1-1.32-1-1.32-1.8-2.52-2.76-3.72a248.76,248.76,0,0,0-23.51-26.64A186.82,186.82,0,0,0,412,62.46c-4-3.48-8.16-6.72-12.48-9.84a162.49,162.49,0,0,0-24.6-15.12c-2.4-1.32-4.8-2.52-7.2-3.72a254,254,0,0,0-55.43-19.56c-1.92-.36-3.84-.84-5.64-1.2h-.12c-1-.12-1.8-.36-2.76-.48a236.35,236.35,0,0,0-38-4H255.14a234.62,234.62,0,0,0-45.48,5c-33.59,7.08-63.23,21.24-82.91,39-1.08,1-1.92,1.68-2.4,2.16l-.48.48H124l-.12.12.12-.12a.12.12,0,0,0,.12-.12l-.12.12a.42.42,0,0,1,.24-.12c14.64-8.76,34.92-16,49.44-19.56l5.88-1.44c.36-.12.84-.12,1.2-.24,1.68-.36,3.36-.72,5.16-1.08.24,0,.6-.12.84-.12C250.94,20.94,319.34,40.14,367,85.61a171.49,171.49,0,0,1,26.88,32.76c30.36,49.2,27.48,111.11,3.84,147.59-34.44,53-111.35,71.27-159,24.84a84.19,84.19,0,0,1-25.56-59,74.05,74.05,0,0,1,6.24-31c1.68-3.84,13.08-25.67,18.24-24.59-13.08-2.76-37.55,2.64-54.71,28.19-15.36,22.92-14.52,58.2-5,83.28a132.85,132.85,0,0,1-12.12-39.24c-12.24-82.55,43.31-153,94.31-170.51-27.48-24-96.47-22.31-147.71,15.36-29.88,22-51.23,53.16-62.51,90.36,1.68-20.88,9.6-52.08,25.8-83.88-17.16,8.88-39,37-49.8,62.88-15.6,37.43-21,82.19-16.08,124.79.36,3.24.72,6.36,1.08,9.6,19.92,117.11,122,206.38,244.78,206.38C392.77,503.42,504,392.19,504,255,503.88,250.48,503.76,245.92,503.52,241.48Z"&gt;&lt;/path&gt;
+&lt;/svg&gt;&lt;/a&gt;&amp;nbsp;  --&gt;
+]
+
+&lt;!-- Can also add a center footer, eg to include the title of the talk --&gt;
+.footer-center[
+
+]
+&lt;!-- And a right footer, to include the date --&gt;
+.footer-right[
+第15届中国R会议
+]
+
+---
+
+
+
+# 森林图
+
+- 主要用于Meta分析，但是也可以用来展示回归模型的参数估计
+
+--
+
+.left-column[
+![](./img/notgood.png)
+]
+
+.right-column[
+&lt;table class=" lightable-classic" style="font-size: 8px; font-family: Cambria; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Subgroup &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Treatment &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Placebo &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; hr1 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; hr2 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; hr3 &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; hr4 &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; All Patients &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 781 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 780 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.18 (0.15 to 2.92) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.52 (0.35 to 2.92) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.61 (0.39 to 3.49) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.95 (1.15 to 2.86) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Sex &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 535 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 548 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3.27 (1.91 to 4.00) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.83 (0.10 to 1.55) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.64 (0.38 to 2.57) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.61 (0.32 to 2.23) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 246 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 232 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.97 (0.63 to 3.97) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3.97 (2.57 to 5.44) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.75 (1.02 to 3.67) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.74 (0.35 to 3.25) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Age &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;lt;65 yr &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 297 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 333 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.45 (1.77 to 3.67) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.00 (0.57 to 3.40) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.39 (0.84 to 2.35) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3.14 (2.16 to 4.30) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;gt;65 yr &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 484 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 447 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.17 (0.22 to 3.02) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.07 (0.48 to 1.72) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.57 (0.79 to 3.20) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.63 (0.94 to 2.35) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;lt;75 yr &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 638 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 649 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.54 (0.96 to 2.59) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.73 (1.90 to 4.64) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.82 (0.66 to 3.58) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.07 (0.30 to 2.20) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;gt;75 yr &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 143 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 131 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.93 (0.64 to 2.72) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.71 (0.33 to 2.87) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.89 (0.06 to 2.24) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.48 (1.79 to 3.55) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Body-mass index &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;lt;Median &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 394 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 385 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.39 (0.68 to 1.91) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.80 (0.74 to 3.17) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.71 (0.73 to 2.88) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.77 (0.06 to 1.53) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;gt;Median &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 387 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 394 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.65 (0.23 to 2.79) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.51 (0.17 to 2.04) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.17 (0.21 to 2.47) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.28 (1.22 to 2.97) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Race &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; White &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 653 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 685 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.93 (1.79 to 4.29) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.12 (1.01 to 3.06) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.89 (1.34 to 3.50) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.10 (0.87 to 3.74) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Black &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 110 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 87 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.83 (1.53 to 4.01) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3.50 (2.18 to 5.43) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.61 (1.70 to 3.19) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.60 (1.90 to 4.32) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Other &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 18 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.44 (0.74 to 3.13) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.02 (1.06 to 3.83) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3.23 (2.48 to 3.92) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.88 (1.95 to 4.14) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Baseline Statin Treatment &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Yes &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 701 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 692 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.29 (1.43 to 3.19) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.64 (1.09 to 2.61) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.34 (1.31 to 3.02) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.90 (1.97 to 4.36) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; No &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 80 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 88 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.37 (0.69 to 3.12) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.71 (0.64 to 3.19) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.80 (0.37 to 3.43) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.86 (0.40 to 2.67) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Intensity of statin treatment &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; High &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 538 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 546 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 3.00 (1.62 to 4.62) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 0.81 (0.29 to 2.46) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.28 (0.38 to 2.06) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.36 (0.96 to 3.64) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Not High &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 243 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 234 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.30 (0.07 to 2.20) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.38 (0.40 to 2.06) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.38 (0.39 to 3.34) &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.17 (0.16 to 2.08) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+
+---
+
+# 森林图
+
+.left-column[
+![](./img/good.png)
+]
+
+.right-column[
+.center[
+  ![:scale 60%](./img/better-forest.png)
+]
+]
+
+---
+
+# 森林图
+
+.center[
+![](./img/forest-explain.webp)
+]
+
+---
+
+
+# 现有其他森林图绘制包
+
+## 现有的包
+- .large[**forestplot**]：从`rmeta`包中剥离出来，目前最流行的包。只能有一列绘制置信区间。
+
+- .large[**meta，metafor，rmeta**]：仅限于使用这些包时绘制meta分析得到的结果。
+
+- .large[**ggforestplot**]：以`ggplot2`为基础的森林图绘制包，不灵活，未在CRAN上发布。
+
+--
+
+.pull-left[
+## 问题
+1. 需要多个列绘制森林图
+2. 直接可以用于出版物的漂亮的森林图
+3. 满足及其挑剔的用户需求
+]
+.pull-right[
+.center[
+![](img/better.gif)
+]
+]
+
+
+---
+
+# 问题分解
+
+
+.center[
+  ![:scale 50%](./img/blank-table-1.png)
+]
+
+---
+
+# 问题分解
+
+
+.center[
+  ![:scale 55%](./img/ci-table-1.png)
+]
+
+---
+# forestploter包
+
+### 安装
+
+```r
+&gt; install.packages("forestploter包")
+```
+
+### 主要函数
+
+```r
+&gt; # Main function
+&gt; forest(data, est, lower, upper, sizes, ci_column, 
++        ref_line, xlim, ticks_at, arrow_lab, x_trans,
++        xlab, theme, ...)
+&gt; 
+&gt; # Theme
+&gt; forest_theme(ci_, legend_, xaxis_, refline_, vertline_, summary_, footnote_, title_, arrow_)
+```
+
+---
+# forestploter包
+
+### 后期处理函数
+
+```r
+&gt; add_text(plot, text, row, col, 
++          part = c("body", "header"), 
++          gp = gpar(),...)
+&gt; 
+&gt; insert_text(plot, text, row, col, 
++             before = TRUE,...)
+&gt; 
+&gt; add_border(plot, row, col, 
++            part = c("body", "header"), 
++            where = c("bottom", "left", "top", "right"), 
++            gp = gpar())
+&gt; 
+&gt; edit_plot(plot, row, col, 
++           part = c("body", "header"),
++           which = c("text", "background", "ci"), 
++           gp = gpar())
+```
+
+---
+
+# 简单的森林图
+
+### 数据准备
+.panelset[
+.panel[.panel-name[代码]
+
+```r
+&gt; # Data manipulation
+&gt; dfm &lt;- dt[,c(1:6)] 
+&gt; # Indent groups
+&gt; dfm$Subgroup &lt;- ifelse(is.na(dfm$Placebo), 
++                        dfm$Subgroup,
++                        paste0("   ", dfm$Subgroup))
+&gt; dfm$trt_ctrl &lt;- paste0(dfm$Treatment, "/", dfm$Placebo)
+&gt; dfm$trt_ctrl[grepl("NA", dfm$trt_ctrl)] &lt;- ""
+&gt; # Space for CI column
+&gt; dfm$ci_col &lt;- paste(rep(" ", 20), collapse = " ")
+&gt; 
+&gt; dfm$hr &lt;- ifelse(is.na(dfm$est), "", 
++                  sprintf("%.2f (%.2f to %.2f)", 
++                          dfm$est, dfm$low, dfm$hi))
+&gt; dfm$Treatment &lt;- NULL
+&gt; dfm$Placebo &lt;- NULL
+```
+]
+
+.panel[.panel-name[表]
+&lt;table class=" lightable-classic" style='font-size: 12px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Subgroup &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; est &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; low &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; hi &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; trt_ctrl &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; ci_col &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; hr &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Sex &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Male &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.449472 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.0683443 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.830600 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 535/548 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.45 (0.07 to 2.83) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Female &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.275120 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.5076801 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.042560 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 246/232 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 2.28 (0.51 to 4.04) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Age &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;lt;65 yr &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.509242 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.6702939 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.348190 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 297/333 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.51 (0.67 to 2.35) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;gt;65 yr &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.468828 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.4549923 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.482663 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 484/447 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.47 (0.45 to 2.48) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Body-mass index &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;lt;Median &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.185109 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.4917097 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.878509 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 394/385 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.19 (0.49 to 1.88) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &amp;gt;Median &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.632056 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.0176504 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3.246460 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 387/394 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.63 (0.02 to 3.25) &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; All Patients &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.300000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.0200000 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.590000 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 781/780 &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; 1.30 (1.02 to 1.59) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+]
+
+---
+
+# 简单的森林图
+
+### 绘图
+.panelset[
+.panel[.panel-name[代码]
+
+
+```r
+&gt; fig_dt &lt;- dfm[,c(1, 5:7)]
+&gt; colnames(fig_dt)[2:4] &lt;- c("Trt/Ctrl", rep("", 2))
+&gt; 
+&gt; p &lt;- forest(fig_dt,
++             est = dfm$est,
++             lower = dfm$low, 
++             upper = dfm$hi,
++             is_summary = c(rep(F, 9), T),
++             ci_column = 3,
++             ref_line = 1,
++             xlim = c(0.3, 4),
++             ticks_at = c(0.5, 1, 1.5, 2.5, 3.5),
++             arrow_lab = c("Better", "Worse"))
+&gt; plot(p)
+```
+]
+
+.panel[.panel-name[图]
+.center[
+![:scale 60%](./img/simple-forest-1.png)
+]
+]
+]
+
+---
+
+# 修改主题
+
+.panelset[
+.panel[.panel-name[代码]
+
+
+```r
+&gt; tm &lt;- forest_theme(base_size = 10,
++                    base_family = "serif",
++                    # Confidence interval point shape, line type/color/width
++                    ci_pch = 15,
++                    ci_col = "#762a83",
++                    ci_fill = "black",
++                    ci_alpha = 0.8,
++                    ci_lwd = 1.5,
++                    ci_Theight = 0.2, # Set an T end at the end of CI 
++                    # Reference line width/type/color
++                    refline_lty = "dashed",
++                    refline_col = "grey20",
++                    # Summary elements
++                    summary_fill = "#67a9cf",
++                    # Arrow
++                    arrow_type = "closed",
++                    arrow_label_just = "end")
+```
+
+]
+
+.panel[.panel-name[图]
+.center[
+![:scale 60%](./img/simple-forest-theme-1.png)
+]
+]
+]
+
+
+---
+
+# 编辑图片
+
+.panelset[
+.panel[.panel-name[代码]
+
+
+```r
+&gt; # Bold and change color
+&gt; g &lt;- edit_plot(p, 
++                row = c(1, 2, 5, 8), 
++                gp = gpar(col = "#b2182b", fontface = "bold"))
+&gt; 
+&gt; # Change color of the CI
+&gt; g &lt;- edit_plot(g,
++                row = 7,
++                col = 3,
++                which = "ci",
++                gp = gpar(col = "black", fill = "red"))
+&gt; 
+&gt; # Edit background of row 5
+&gt; g &lt;- edit_plot(g, row = 7, which = "background",
++                gp = gpar(fill = "darkolivegreen1"))
+&gt; plot(g)
+```
+]
+
+.panel[.panel-name[图]
+.center[
+![:scale 60%](./img/edit-plot-1.png)
+]
+]
+]
+
+---
+
+# 添加文字
+
+.panelset[
+.panel[.panel-name[代码]
+
+
+```r
+&gt; g &lt;- add_text(g, "HR (95% CI)", col = 3:4, part = "header",
++               gp = gpar(fontface = "bold"))
+&gt; 
+&gt; g &lt;- insert_text(g, "Data source: This is a demo data",
++                  row = 10, col = 1:2, 
++                  part = "body", just = "left",
++                  before = FALSE,
++                  gp = gpar(fontface = "italic",
++                            fontsize = 8,
++                            col = "blue"))
+&gt; plot(g)
+```
+]
+
+.panel[.panel-name[图]
+.center[
+![:scale 60%](./img/edit-text-1.png)
+]
+]
+]
+
+---
+
+# 添加边框
+
+.panelset[
+.panel[.panel-name[代码]
+
+
+```r
+&gt; g &lt;- add_border(g, part = "header", row = 1, where = "top")
+&gt; g &lt;- add_border(g, part = "header", row = 1, where = "bottom")
+&gt; 
+&gt; g &lt;- add_border(g, col = 1, row = 2:10,
++                 where = "right", 
++                 gp = gpar(lty = "dashed", col = "#878787"))
+&gt; plot(g)
+```
+]
+
+.panel[.panel-name[图]
+.center[
+![:scale 60%](./img/add-border-1.png)
+]
+]
+]
+
+---
+
+# 多组多列复杂森林图
+
+.panelset[
+.panel[.panel-name[代码]
+
+
+
+
+```r
+&gt; fig_dt &lt;- dt[,c(1, 19, 21, 23, 20, 22)]
+&gt; colnames(fig_dt)[2:6] &lt;- c("N", "HR (95% CI)", "", "N", "HR (95% CI)")
+&gt; 
+&gt; tm &lt;- forest_theme(base_size = 10, ci_pch = c(15, 18),
++                    ci_fill = c("#e41a1c", "#377eb8"),
++                    legend_name = "Treatment Arm",
++                    legend_value = c("Trt 1", "Trt 2"))
+&gt; 
+&gt; p &lt;- forest(fig_dt,
+*+             est = list(dt$est_gp1, dt$est_gp2, dt$est_gp3, dt$est_gp4),
+*+             lower = list(dt$low_gp1, dt$low_gp2, dt$low_gp3, dt$low_gp4),
+*+             upper = list(dt$hi_gp1, dt$hi_gp2, dt$hi_gp3, dt$hi_gp4),
++             ci_column = c(3, 6),
++             ref_line = 1, nudge_y = 0.3,
+*+             xlim = list(c(0.5, 4), c(0, 5)),
+*+             ticks_at = list(c(0.5, 1, 2, 3), c(0.5, 1, 2.5)),
++             theme = tm)
+```
+
+
+
+
+]
+
+.panel[.panel-name[图]
+.center[
+![:scale 60%](./img/multiple-group-1.png)
+]
+]
+]
+
+
+---
+
+# 图片保存
+
+
+
+```r
+&gt; # Get width and height
+&gt; p_wh &lt;- get_wh(plot = p, unit = "in")
+&gt; 
+&gt; png('rplot.png', res = 300, 
++     width = p_wh[1], 
++     height = p_wh[2], units = "in")
+&gt; p
+&gt; dev.off()
+```
+
+
+---
+
+# 总结
+
+## 优点
+1. 仅依赖`gtable`和`gridExtra`两个包。
+2. 输出的是`gTree`对象，可以用`ggsave`输出。
+3. 可以通过`forest_theme`修改森林图的所有元素，包括每个单元格的文字对齐和数学公式的支持，详见帮助文档。
+4. 对图片进行后续编辑。
+
+## 不足
+* 图的生成过程涉及到图片元素空间占用的计算，无法对图进行缩放。
+
+---
+
+class: thankyou-barney 
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="assets/macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<style type="text/css">
+.countdown {
+  background: transparent;
+  position: absolute;
+  cursor: pointer;
+  /* font-size: 1em;  */
+  line-height: 1.2;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  /* padding: 0 15px;   */
+  text-align: center;
+}
+
+code.countdown-time {
+  vertical-align: middle;
+}
+
+.countdown-digits {
+  color: #eaeaea;
+}
+
+.countdown.running {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.countdown.running .countdown-digits {
+  color: grey;
+}
+
+.countdown.finished {
+  border-color: #CC0033;
+  background-color: #5F6A72;
+}
+
+.countdown.finished .countdown-digits {
+  color: #CC0033;
+}
+
+.countdown.running.warning {
+  border-color: #CFAE24;
+  background-color: #E6C229;
+}
+
+.countdown.running.warning .countdown-digits {
+  color: #39300A;
+}
+
+@-webkit-keyframes blink {
+  from {opacity: 1}
+  50% {opacity: 0.1}
+  to {opacity: 1}
+}
+
+@keyframes blink {
+  from {opacity: 1}
+  50% {opacity: 0.1}
+  to {opacity: 1}
+}
+
+.countdown.running.blink-colon .countdown-digits.colon {
+  -webkit-animation: blink 2s steps(1, end) 0s infinite;
+  animation: blink 2s steps(1, end) 0s infinite;
+}
+
+</style>
+
+
+<script>
+var counters = {timer: {}};
+var update_timer = function(timer, force = false) {
+	var secs = timer.value;
+
+	// check if we should update timer or not
+	noup = timer.div.className.match(/noupdate-\d+/);
+	if (!force && noup != null) {
+	  noup = parseInt(noup[0].match(/\d+$/));
+	  if (secs > noup * 2 && secs % noup > 0) { return; }
+	}
+
+	// should we apply or remove warning class?
+	warnwhen = timer.div.dataset.warnwhen;
+	if (warnwhen && warnwhen > 0) {
+	  if (secs <= warnwhen && !timer.div.classList.contains("warning")) {
+	    timer.div.classList.add("warning");
+	  } else if (secs > warnwhen && timer.div.classList.contains("warning")) {
+	    timer.div.classList.remove("warning");
+	  }
+	}
+
+  var mins = Math.floor(secs / 60); // 1 min = 60 secs
+  secs -= mins * 60;
+
+  // Update HTML
+  timer.min.innerHTML = String(mins).padStart(2, 0);
+  timer.sec.innerHTML = String(secs).padStart(2, 0);
+}
+var countdown = function (e) {
+  target = e.target;
+  if (target.classList.contains("countdown-digits")) {
+    target = target.parentElement;
+  }
+  if (target.tagName == "CODE") {
+    target = target.parentElement;
+  }
+
+  // Init counter
+  if (!counters.timer.hasOwnProperty(target.id)) {
+    counters.timer[target.id] = {};
+    // Set the containers
+	  counters.timer[target.id].min = target.getElementsByClassName("minutes")[0];
+  	counters.timer[target.id].sec = target.getElementsByClassName("seconds")[0];
+  	counters.timer[target.id].div = target;
+  }
+
+  if (!counters.timer[target.id].running) {
+    if (!counters.timer[target.id].end) {
+      counters.timer[target.id].end   = parseInt(counters.timer[target.id].min.innerHTML) * 60;
+		  counters.timer[target.id].end  += parseInt(counters.timer[target.id].sec.innerHTML);
+    }
+
+    counters.timer[target.id].value = counters.timer[target.id].end;
+    update_timer(counters.timer[target.id]);
+    if (counters.ticker) counters.timer[target.id].value += 1;
+
+    // Start if not past end date
+    if (counters.timer[target.id].value > 0) {
+      base_class = target.className.replace(/\s?(running|finished)/, "")
+      target.className = base_class + " running";
+      counters.timer[target.id].running = true;
+
+      if (!counters.ticker) {
+        counters.ticker = setInterval(counter_update_all, 1000);
+      }
+    }
+  } else {
+    // Bump timer value if running & clicked
+    counters.timer[target.id].value += counter_bump_increment(counters.timer[target.id].end);
+    update_timer(counters.timer[target.id], force = true);
+    counters.timer[target.id].value += 1;
+  }
+};
+
+var counter_bump_increment = function(val) {
+  if (val <= 30) {
+    return 5;
+  } else if (val <= 300) {
+    return 15;
+  } else if (val <= 3000) {
+    return 30;
+  } else {
+    return 60;
+  }
+}
+
+var counter_update_all = function() {
+  // Iterate over all running timers
+  for (var i in counters.timer) {
+    // Stop if passed end time
+    console.log(counters.timer[i].id)
+    counters.timer[i].value--;
+    if (counters.timer[i].value <= 0) {
+      counters.timer[i].min.innerHTML = "00";
+      counters.timer[i].sec.innerHTML = "00";
+      counters.timer[i].div.className = counters.timer[i].div.className.replace("running", "finished");
+      counters.timer[i].running = false;
+    } else {
+      // Update
+      update_timer(counters.timer[i]);
+
+      // Play countdown sound if data-audio=true on container div
+      if (counters.timer[i].div.dataset.audio && counters.timer[i].value == 5) {
+        counter_play_sound();
+      }
+    }
+  }
+
+  // If no more running timers, then clear ticker
+  var timerIsRunning = false;
+  for (var t in counters.timer) {
+    timerIsRunning = timerIsRunning || counters.timer[t].running
+  }
+  if (!timerIsRunning) {
+    clearInterval(counters.ticker);
+    counters.ticker = null;
+  }
+}
+
+var counter_play_sound = function() {
+  try {
+    var finished_sound = new Audio('libs/countdown/smb_stage_clear.mp3');
+    finished_sound.play();
+  } catch (e) {
+    try {
+      var finished_sound = new Audio('smb_stage_clear.mp3');
+      finished_sound.play();
+    } catch (e) {
+      console.log("Unable to locate sound file smb_stage_clear.mp3.")
+    }
+  }
+}
+
+var counter_addEventListener = function() {
+  if (!document.getElementsByClassName("countdown").length) {
+    setTimeout(counter_addEventListener, 2);
+    return;
+  }
+  var counter_divs = document.getElementsByClassName("countdown");
+  console.log(counter_divs);
+  for (var i = 0; i < counter_divs.length; i++) {
+    counter_divs[i].addEventListener("click", countdown, false);
+  }
+};
+
+counter_addEventListener();
+</script>
+
+<div class="countdown" id="timer_5ddeaad6" style="bottom:0;z-index:100" data-warnwhen="0">
+  <code class="countdown-time">
+    <span class="countdown-digits minutes">25</span>
+    <span class="countdown-digits colon">:</span>
+    <span class="countdown-digits seconds">00</span>
+  </code>
+</div>
+
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
